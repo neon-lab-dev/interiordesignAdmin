@@ -23,21 +23,25 @@ function DashboardLayout() {
         {/* Navigation Links */}
         <nav className="w-full">
           <ul>
-            {["home", "about", "services", "contact", "profile"].map(
-              (link, index) => (
-                <li key={index}>
-                  <Link
-                    to={link}
-                    onClick={() => handleLinkClick(link)}
-                    className={`block px-4 py-2 text-text-accent items-center flex h-[50px] rounded-[6px] hover:bg-accent-10 hover:text-white ${
-                      activeLink === link ? "bg-accent-10 text-white" : ""
-                    }`}
-                  >
-                    <p className="pl-[54px] capitalize">{link}</p>
-                  </Link>
-                </li>
-              )
-            )}
+            {[
+              { name: "Dashboard", path: "dashboard" },
+              { name: "about", path: "about" },
+              { name: "orders", path: "orders" },
+              { name: "contact", path: "contact" },
+              { name: "profile", path: "profile" },
+            ].map((link, index) => (
+              <li key={index}>
+                <Link
+                  to={link.path}
+                  onClick={() => handleLinkClick(link.name)}
+                  className={`block px-4 py-2 text-text-accent items-center flex h-[50px] rounded-[6px] hover:bg-accent-10 hover:text-white ${
+                    activeLink === link.name ? "bg-accent-10 text-white" : ""
+                  }`}
+                >
+                  <p className="pl-[54px] capitalize">{link.name}</p>
+                </Link>
+              </li>
+            ))}
           </ul>
         </nav>
       </aside>

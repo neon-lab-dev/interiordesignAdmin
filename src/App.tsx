@@ -7,6 +7,8 @@ import {
 } from "react-router-dom";
 import LoginPage from "./pages/Login/login";
 import DashboardLayout from "./layout/layout";
+import Dashboard from  "./pages/Dashboard/Dashboard"
+import Orders from "./pages/Orders/Orders";
 
 function App() {
   return (
@@ -14,9 +16,9 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/dashboard/*" element={<DashboardLayout />}>
-          {/* <Route path="home" element={<HomePage />} />
-          <Route path="settings" element={<SettingsPage />} /> */}
+        <Route path="/*" element={<DashboardLayout />}>
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="orders" element={<Orders />} />
           {/* Add more routes here */}
         </Route>
       </Routes>

@@ -25,17 +25,32 @@ export default {
           accent: "#C8C8C8",
           accent10: "#7E7E7E",
           muted: "#969696",
-
         },
         error: "#FD5454",
         process: "#FCBE2D",
-        sucess: "#00B69B",
+        success: "#00B69B",
         border: {
           10: "#505050",
           20: "#979797",
           30: "#585555",
           40: "#C3C3C3",
         },
+        icons: {
+          purlpe: "#8280FF",
+          yellow: "#FEC53D",
+          green:"#19AE8A",
+          red:"#FF6C6C",
+          lightGreen:"#4AD991",
+          orange:"#FF9066",
+          gray:"#A9A9A9",
+          blue:"#0047AB"
+        },
+      },
+      letterSpacing: {
+        "-0.11": "-0.11px",
+      },
+      boxShadow: {
+        statusCard: "6px 6px 54px 0px rgba(0, 0, 0, 0.05)",
       },
     },
   },
