@@ -1,5 +1,5 @@
 import React from "react";
-import Table from "../../components/Table/Table";
+import Table from "../../components/Shared/Table/Table";
 
 const Orders = () => {
   const handleViewDetails = (id: string) => {

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ICONS } from "../../assets";
+import { ICONS } from "../../../assets";
 
 interface Column {
   header: string | JSX.Element;
