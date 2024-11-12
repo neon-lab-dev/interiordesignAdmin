@@ -26,9 +26,9 @@ function DashboardLayout() {
             {[
               { name: "Dashboard", path: "dashboard" },
               { name: "about", path: "about" },
-              { name: "orders", path: "orders" },
-              { name: "contact", path: "contact" },
-              { name: "profile", path: "profile" },
+              { name: "Orders", path: "orders" },
+              { name: "Users", path: "users" },
+              { name: "Products", path: "products" },
             ].map((link, index) => (
               <li key={index}>
                 <Link
@@ -51,7 +51,7 @@ function DashboardLayout() {
         {/* Header stays at the top */}
         <Header />
 
-        <div className="flex-1">
+        <div className="flex-1 px-6">
           <Outlet />
         </div>
       </div>

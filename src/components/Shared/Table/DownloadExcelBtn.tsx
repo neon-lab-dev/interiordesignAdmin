@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import * as XLSX from 'xlsx';
-import { ICONS } from '../../assets';
+import { ICONS } from '../../../assets';
 
 interface DownloadButtonProps {
   data: Array<Record<string, any>>;
@@ -13,16 +13,14 @@ const DownloadButton: React.FC<DownloadButtonProps> = ({ data }) => {
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Table Data");
     XLSX.writeFile(workbook, "table_data.xlsx");
+    console.log("clicked")
   };
 
   return (
-    <button
-      className=" px-2 flex items-center gap-2 py-2 text-sm bg-primary-10 text-white rounded-xl disabled:opacity-50 "
-      disabled={false}
-      onClick={downloadExcel}
-    >
-      <img src={ICONS.download} alt="" className='w-6 h-6'/>
-    </button>
+    
+      <span className="items-center bg-primary-30 h-[38px] w-[38px] flex justify-center rounded-[10px]"  onClick={downloadExcel}>
+              <img src={ICONS.download} alt="" className="w-6 h-6" />
+            </span>
   );
 };
 

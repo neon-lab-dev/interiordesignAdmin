@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { ICONS } from "../../../assets";
+import DownloadButton from "./DownloadExcelBtn";
+import DropdownFilter from "./Dropdown";
 
 interface Column {
   header: string | JSX.Element;
@@ -27,9 +29,6 @@ interface TableProps {
     i2: string;
     i3: string;
   };
-  bg_i1: string;
-  bg_i2: string;
-  bg_i3: string;
 }
 
 const formatDate = (date: Date) => {
@@ -48,17 +47,31 @@ const Table: React.FC<TableProps> = ({
   enablePagination = false,
   rowsPerPage = 5,
   tableWidth = "full",
-  tableHeight = "400px",
+  tableHeight = "full",
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [filter, setFilter] = useState<string | null>(null);
+
+  const handleFilterSelect = (selectedOption: string) => {
+    setFilter(selectedOption === "All" ? null : selectedOption);
+  };
+
+  const filteredData = filter
+    ? data.filter(
+        (row) => row.orderStatus.toLowerCase() === filter.toLowerCase()
+      )
+    : data;
+
   const totalPages = enablePagination
-    ? Math.ceil(data.length / rowsPerPage)
+    ? Math.ceil(filteredData.length / rowsPerPage)
     : 1;
   const startIndex = enablePagination ? (currentPage - 1) * rowsPerPage : 0;
-  const endIndex = enablePagination ? startIndex + rowsPerPage : data.length;
+  const endIndex = enablePagination
+    ? startIndex + rowsPerPage
+    : filteredData.length;
   const currentData = enablePagination
-    ? data.slice(startIndex, endIndex)
-    : data;
+    ? filteredData.slice(startIndex, endIndex)
+    : filteredData;
 
   const handleNextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
@@ -69,10 +82,8 @@ const Table: React.FC<TableProps> = ({
   };
 
   return (
-    <div
-      className={`w-full overflow-hidden bg-primary-20 my-5 scrollbar-hide rounded-2xl px-8 py-5`}
-    >
-      <div className="w-full overflow-hidden bg-secondary-60 shadow-tableShadow">
+    <div className="flex flex-col  overflow-hidden bg-primary-20  scrollbar-hide rounded-2xl px-8 py-5">
+      <div className="w-full overflow-hidden shadow-tableShadow">
         <div className="w-[100%] flex justify-between items-center h-10 mb-4">
           <div className="p-1 px-5 bg-primary-30 w-[338px] h-[38px] flex gap-2 items-center rounded-full">
             <img
@@ -88,35 +99,28 @@ const Table: React.FC<TableProps> = ({
           </div>
           <div className="flex items-center justify-between gap-3">
             {showViewAll && (
-              <div className="flex items-center bg-primary-30 rounded-[10px] w-[199px] px-2">
-                <div className="h-10 flex items-center border-r-[0.3px] border-r-border-20 w-12">
-                  <img src={ICONS.filter} alt="" className="ml-2 w-[19.5px] h-[22.5px]" />
-                </div>
-                <div className="flex items-center justify-between font-normal text-sm w-full">
-                  <p className="text-text-accent px-3">All {}</p>
-                  <img src={ICONS.downArrow} alt="" className="ml-2 w-6 h-6" />
-                </div>
-              </div>
+              <DropdownFilter
+                label={filter ? filter : "All"}
+                options={["All", "Shipped", "Delivered", "Processing", "Cancelled"]}
+                onSelect={handleFilterSelect}
+              />
             )}
-            <span className="items-center bg-primary-30 h-[38px] w-[38px] flex justify-center rounded-[10px]">
-              <img src={ICONS.download} alt="" className="w-6 h-6" />
-            </span>
+            <DownloadButton data={data} />
           </div>
         </div>
 
         <div
-          className={`overflow-hidden ${!enablePagination ? "overflow-y-auto" : ""}`}
-          style={{ maxHeight: tableHeight, minWidth: tableWidth }}
-        >
+  className="overflow-y-auto flex-grow"
+  style={{ height: "400px", maxHeight: "400px" }} >
           <table className="min-w-full text-left border-separate border-spacing-y-1">
             <thead className="sticky top-0 bg-primary-30 min-h-10">
               <tr>
                 {columns.map((col, index) => (
                   <th
                     key={index}
-                    className={`pl-3 py-3 font-normal text-[14px] text-text-accent whitespace-nowrap
-                    ${index === 0 ? "rounded-l-[12px]" : ""}
-                    ${index === columns.length - 1 ? "rounded-r-[12px]" : ""}`}
+                    className={`pl-3 py-3 font-normal text-[14px] text-text-accent whitespace-nowrap ${
+                      index === 0 ? "rounded-l-[12px]" : ""
+                    } ${index === columns.length - 1 ? "rounded-r-[12px]" : ""}`}
                     style={{ minWidth: col.width }}
                   >
                     <div className="flex items-center justify-between text-[14px] text-neutral-85">
@@ -169,26 +173,24 @@ const Table: React.FC<TableProps> = ({
 
       {enablePagination && (
         <div className="flex justify-between md:justify-end items-center mt-4">
-          <button
-            onClick={handlePrevPage}
-            disabled={currentPage === 1}
-            className="text-black mx-3 my-2 disabled:opacity-50 flex items-center"
-          >
-            Previous
-          </button>
-
-          <span className="mx-2">
-            {String(startIndex + 1).padStart(2, '0')}-
-            {String(Math.min(endIndex, data.length)).padStart(2, '0')}
+          <span className="mx-2 font-normal text-[14px] leading-[17px] text-text-accent">
+            showing
+            {String(startIndex + 1).padStart(2, "0")}-{" "}
+            {String(Math.min(endIndex, data.length)).padStart(2, "0")} of{" "}
+            {data.length}
           </span>
-
-          <button
-            onClick={handleNextPage}
-            disabled={currentPage === totalPages}
-            className="text-black mx-3 my-2 disabled:opacity-50 flex items-center"
-          >
-            Next
-          </button>
+          <span className="flex justify-between items-center">
+            <button
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+              className="text-black mx-3 my-2 disabled:opacity-50 flex items-center"
+            ></button>
+            <button
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+              className="text-black mx-3 my-2 disabled:opacity-50 flex items-center"
+            ></button>
+          </span>
         </div>
       )}
     </div>

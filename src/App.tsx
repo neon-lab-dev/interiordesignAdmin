@@ -9,6 +9,9 @@ import LoginPage from "./pages/Login/login";
 import DashboardLayout from "./layout/layout";
 import Dashboard from  "./pages/Dashboard/Dashboard"
 import Orders from "./pages/Orders/Orders";
+import Users from "./pages/Users/Users";
+import Products from "./pages/Products/Products";
+import CreateProducts from "./pages/Products/CreatrProducts";
 
 function App() {
   return (
@@ -19,6 +22,9 @@ function App() {
         <Route path="/*" element={<DashboardLayout />}>
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="orders" element={<Orders />} />
+          <Route path="users" element={<Users />} />
+          <Route path="products" element={<Products />} />
+          <Route path="createProduct" element={<CreateProducts />} />
           {/* Add more routes here */}
         </Route>
       </Routes>

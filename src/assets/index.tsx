@@ -18,6 +18,11 @@ import downArrow from "./icons/downArrow.svg"
 import download from "./icons/download.svg"
 import filter from "./icons/filter.svg"
 
+// products
+import createProducts from "./icons/createProduct.svg"
+import deleteIcon from "./icons/delete.svg"
+
+
 
 export const ICONS = {
   logo,
@@ -34,5 +39,7 @@ export const ICONS = {
   shipped,
   downArrow,
   download,
-  filter
+  filter,
+  createProducts,
+  deleteIcon
 };
