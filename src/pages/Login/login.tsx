@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { ICONS } from "../../assets";
 import InputBox from "../../components/Login/InputBox";
 import Button from "../../components/Shared/button";
+import { useNavigate } from "react-router-dom";
 
 const login = () => {
+  const navigate = useNavigate();
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   return (
@@ -33,6 +35,7 @@ const login = () => {
           text="Login"
           textClass="text-[20px] leading-[24px] text-white flex justify-center"
           color="bg-accent-10 w-[515px] h-[64px]"
+          onClick={() => navigate("/dashboard")}
         />
       </div>
     </div>

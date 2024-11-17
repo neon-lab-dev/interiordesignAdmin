@@ -1,11 +1,17 @@
-// DashboardLayout.tsx
-import { useState } from "react";
-import { Outlet, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Outlet, Link, useLocation } from "react-router-dom";
 import { ICONS } from "../assets";
 import Header from "../components/Shared/header";
 
 function DashboardLayout() {
   const [activeLink, setActiveLink] = useState("");
+  const location = useLocation();
+
+  useEffect(() => {
+    // Set active link based on the current path
+    const path = location.pathname.split("/")[1]; // Get the main section of the path
+    setActiveLink(path || "dashboard");
+  }, [location]);
 
   const handleLinkClick = (link: string) => {
     setActiveLink(link);
@@ -24,26 +30,26 @@ function DashboardLayout() {
         <nav className="w-full">
           <ul>
             {[
-              { name: "Dashboard", path: "dashboard" },
-              { name: "about", path: "about" },
-              { name: "Orders", path: "orders" },
-              { name: "Users", path: "users" },
-              { name: "Products", path: "products" },
+              { name: "dashboard", path: "dashboard" },
+              { name: "products", path: "products" },
+              { name: "orders", path: "orders" },
+              { name: "users", path: "users" },
+              { name: "coupons", path: "coupons" },
             ].map((link, index) => (
               <li key={index}>
                 <Link
                   to={link.path}
                   onClick={() => handleLinkClick(link.name)}
-                  className={`block px-4 py-2 text-text-accent items-center flex h-[50px] rounded-[6px] hover:bg-accent-10 hover:text-white ${
+                  className={`block px-4 py-2 text-text-accent items-center justify-center flex h-[50px] rounded-[6px] hover:bg-accent-10 hover:text-white ${
                     activeLink === link.name ? "bg-accent-10 text-white" : ""
                   }`}
                 >
-                  <p className="pl-[54px] capitalize">{link.name}</p>
+                  <p className="text-center capitalize">{link.name}</p>
                 </Link>
               </li>
             ))}
           </ul>
-        </nav>
+        </nav> 
       </aside>
 
       {/* Main Content */}

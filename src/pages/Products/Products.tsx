@@ -1,7 +1,7 @@
-import React from "react";
 import Table from "../../components/Shared/Table/Table"; // Adjust the path as needed
 import Button from "../../components/Shared/button";
 import { ICONS } from "../../assets";
+import { useNavigate } from "react-router-dom";
 
 // Example product data
 const productData = [
@@ -86,6 +86,80 @@ const productData = [
     price: "$50",
     stock: "Out of Stock",
   },
+
+  {
+    id: 2,
+    name: "Product 2",
+    image: "https://via.placeholder.com/50",
+    category: "Clothing",
+    discount: "15%",
+    price: "$50",
+    stock: "Out of Stock",
+  },
+  {
+    id: 2,
+    name: "Product 2",
+    image: "https://via.placeholder.com/50",
+    category: "Clothing",
+    discount: "15%",
+    price: "$50",
+    stock: "Out of Stock",
+  },
+  {
+    id: 2,
+    name: "Product 2",
+    image: "https://via.placeholder.com/50",
+    category: "Clothing",
+    discount: "15%",
+    price: "$50",
+    stock: "Out of Stock",
+  },
+  {
+    id: 2,
+    name: "Product 2",
+    image: "https://via.placeholder.com/50",
+    category: "Clothing",
+    discount: "15%",
+    price: "$50",
+    stock: "Out of Stock",
+  },
+  {
+    id: 2,
+    name: "Product 2",
+    image: "https://via.placeholder.com/50",
+    category: "Clothing",
+    discount: "15%",
+    price: "$50",
+    stock: "Out of Stock",
+  },
+  {
+    id: 2,
+    name: "Product 2",
+    image: "https://via.placeholder.com/50",
+    category: "Clothing",
+    discount: "15%",
+    price: "$50",
+    stock: "Out of Stock",
+  },{
+    id: 2,
+    name: "Product 2",
+    image: "https://via.placeholder.com/50",
+    category: "Clothing",
+    discount: "15%",
+    price: "$50",
+    stock: "Out of Stock",
+  },
+  {
+    id: 2,
+    name: "Product 2",
+    image: "https://via.placeholder.com/50",
+    category: "Clothing",
+    discount: "15%",
+    price: "$50",
+    stock: "Out of Stock",
+  },
+
+  
   // Add more products as needed
 ];
 
@@ -174,6 +248,7 @@ const columns = [
 ];
 
 const Products = () => {
+  const navigate = useNavigate();
   return (
     <div>
       <div className="flex justify-between">
@@ -186,7 +261,7 @@ const Products = () => {
           color="bg-accent-20 h-[50px]"
           iconClassName="text-white h-[28px] w-[28px]" // Optional: Customize icon style
           textClass="text-base text-white font-semibold" // Optional: Customize text style
-          onClick={() => console.log("Button clicked")} // Optional: Define an onClick handler
+          onClick={() => navigate("/products/createProduct")}// Optional: Define an onClick handler
         />
       </div>
       <Table

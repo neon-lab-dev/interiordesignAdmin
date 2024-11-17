@@ -17,12 +17,17 @@ import shipped from "./icons/shipped.svg"
 import downArrow from "./icons/downArrow.svg"
 import download from "./icons/download.svg"
 import filter from "./icons/filter.svg"
+import rightArrow from "./icons/rightArrow.svg"
+import leftArrow from "./icons/leftArrow.svg"
+
 
 // products
 import createProducts from "./icons/createProduct.svg"
 import deleteIcon from "./icons/delete.svg"
 
-
+// coupons
+import couponImg from "./icons/couponImg.svg"
+import close from "./icons/close.svg"
 
 export const ICONS = {
   logo,
@@ -41,5 +46,9 @@ export const ICONS = {
   download,
   filter,
   createProducts,
-  deleteIcon
+  deleteIcon,
+  couponImg,
+  close,
+  rightArrow,
+  leftArrow
 };

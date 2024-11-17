@@ -1,4 +1,3 @@
-import React from "react";
 import { ICONS } from "../../assets";
 import StatusCard from "../../components/Dashboard/StatusCard";
 

@@ -46,8 +46,6 @@ const Table: React.FC<TableProps> = ({
   showViewAll,
   enablePagination = false,
   rowsPerPage = 5,
-  tableWidth = "full",
-  tableHeight = "full",
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState<string | null>(null);
@@ -101,7 +99,13 @@ const Table: React.FC<TableProps> = ({
             {showViewAll && (
               <DropdownFilter
                 label={filter ? filter : "All"}
-                options={["All", "Shipped", "Delivered", "Processing", "Cancelled"]}
+                options={[
+                  "All",
+                  "Shipped",
+                  "Delivered",
+                  "Processing",
+                  "Cancelled",
+                ]}
                 onSelect={handleFilterSelect}
               />
             )}
@@ -110,8 +114,9 @@ const Table: React.FC<TableProps> = ({
         </div>
 
         <div
-  className="overflow-y-auto flex-grow"
-  style={{ height: "400px", maxHeight: "400px" }} >
+          className="overflow-y-auto flex-grow"
+          style={{ height: "400px", maxHeight: "400px" }}
+        >
           <table className="min-w-full text-left border-separate border-spacing-y-1">
             <thead className="sticky top-0 bg-primary-30 min-h-10">
               <tr>
@@ -120,7 +125,9 @@ const Table: React.FC<TableProps> = ({
                     key={index}
                     className={`pl-3 py-3 font-normal text-[14px] text-text-accent whitespace-nowrap ${
                       index === 0 ? "rounded-l-[12px]" : ""
-                    } ${index === columns.length - 1 ? "rounded-r-[12px]" : ""}`}
+                    } ${
+                      index === columns.length - 1 ? "rounded-r-[12px]" : ""
+                    }`}
                     style={{ minWidth: col.width }}
                   >
                     <div className="flex items-center justify-between text-[14px] text-neutral-85">
@@ -133,7 +140,10 @@ const Table: React.FC<TableProps> = ({
 
             <tbody>
               {currentData.map((row, rowIndex) => (
-                <tr key={rowIndex} className="border-b-2 border-border-20 min-h-10">
+                <tr
+                  key={rowIndex}
+                  className="border-b-2 border-border-20 min-h-10"
+                >
                   {columns.map((col, colIndex) => (
                     <td
                       key={colIndex}
@@ -174,23 +184,30 @@ const Table: React.FC<TableProps> = ({
       {enablePagination && (
         <div className="flex justify-between md:justify-end items-center mt-4">
           <span className="mx-2 font-normal text-[14px] leading-[17px] text-text-accent">
-            showing
-            {String(startIndex + 1).padStart(2, "0")}-{" "}
+            Showing {String(startIndex + 1).padStart(2, "0")}-{" "}
             {String(Math.min(endIndex, data.length)).padStart(2, "0")} of{" "}
             {data.length}
           </span>
-          <span className="flex justify-between items-center">
-            <button
+          <div className="bg-primary-30 rounded-lg flex">
+            <span
               onClick={handlePrevPage}
-              disabled={currentPage === 1}
-              className="text-black mx-3 my-2 disabled:opacity-50 flex items-center"
-            ></button>
-            <button
+              className={`p-2 cursor-pointer border-r-[0.4px] border-border-20 ${
+                currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              <img src={ICONS.leftArrow} alt="Previous" />
+            </span>
+            <span
               onClick={handleNextPage}
-              disabled={currentPage === totalPages}
-              className="text-black mx-3 my-2 disabled:opacity-50 flex items-center"
-            ></button>
-          </span>
+              className={`p-2 cursor-pointer ${
+                currentPage === totalPages
+                  ? "opacity-50 cursor-not-allowed"
+                  : ""
+              }`}
+            >
+              <img src={ICONS.rightArrow} alt="Next" />
+            </span>
+          </div>
         </div>
       )}
     </div>

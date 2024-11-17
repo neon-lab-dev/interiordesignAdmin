@@ -1,6 +1,4 @@
-import React from "react";
 import Table from "../../components/Shared/Table/Table";
-import { ICONS } from "../../assets";
 
 const columns = [
   { header: "ID", accessor: "id", width: "250px", cellClassName:"font-normal text-[14px] leading-[17px] text-text-accent"},

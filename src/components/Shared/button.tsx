@@ -9,6 +9,7 @@ type ButtonProps = {
   iconClassName?: string;
   textClass?: string;
   onClick?: () => void;
+  disabled?: boolean; 
 };
 
 const Button: React.FC<ButtonProps> = ({
@@ -20,12 +21,14 @@ const Button: React.FC<ButtonProps> = ({
   iconClassName,
   textClass,
   onClick,
+  disabled, 
 }) => {
   return (
     <button
       type={type}
       onClick={onClick}
       className={`py-3 sm:py-4 flex justify-center items-center gap-2 ${color}`}
+      disabled={disabled} // Apply the disabled attribute
     >
       {imgSrc && (
         <img src={imgSrc} alt={text} className={`w-4 h-4 ${iconClassName}`} />
