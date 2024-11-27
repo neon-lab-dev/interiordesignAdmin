@@ -3,11 +3,53 @@ import { ICONS } from "../../assets";
 import InputBox from "../../components/Login/InputBox";
 import Button from "../../components/Shared/button";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-const login = () => {
+const Login = () => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const handleLogin = async () => {
+    try {  
+      console.log(userName)
+      const response = await axios.post(
+        "http://interior-design-backend-nine.vercel.app/api/v1/login",
+        {
+          email: userName,
+          password: password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response.status )
+      if (response.data.success === true) {
+        console.log("sucessfull")
+        localStorage.setItem("adminToken", response.data.token);
+        navigate("/dashboard");
+      } else {
+        setErrorMessage("Login failed: " + response.data.message);
+      }
+    } catch (error:any) {
+      console.error("Error details:", error);
+      if (error.response) {
+        // The server responded with a status code other than 2xx
+        console.log("Response error:", error.response);
+        setErrorMessage("Login failed: " + error.response.data.message);
+      } else if (error.request) {
+        // The request was made but no response was received
+        setErrorMessage("Network error, please try again.");
+      } else {
+        // Something happened while setting up the request
+        setErrorMessage("An error occurred: " + error.message);
+      }
+    }
+    
+  };
+  
   return (
     <div className="bg-primary-10 w-screen h-screen justify-center p-[86px] flex ">
       <div className="bg-primary-20 p-16 h-fit rounded-3xl items-center flex-col flex w-[888px]">
@@ -31,15 +73,20 @@ const login = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
+
+        {errorMessage && (
+          <div className="text-red-500 text-sm">{errorMessage}</div>
+        )}
+
         <Button
           text="Login"
           textClass="text-[20px] leading-[24px] text-white flex justify-center"
           color="bg-accent-10 w-[515px] h-[64px]"
-          onClick={() => navigate("/dashboard")}
+          onClick={handleLogin} // Trigger the login when button is clicked
         />
       </div>
     </div>
   );
 };
 
-export default login;
+export default Login;
