@@ -4,9 +4,10 @@ interface InputFieldProps {
   type: "text" | "textarea" | "select";
   placeholder: string;
   options?: string[];
-  value: string | string[];
-  onChange: (value: string | string[]) => void;
+  value: any;
+  onChange: (value: any) => void;
   className?: string;
+  name?:string;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -16,6 +17,7 @@ const InputField: React.FC<InputFieldProps> = ({
   value,
   onChange,
   className = "",
+  name=""
 }) => {
   const handleSelectChange = (option: string) => {
     if (Array.isArray(value)) {
@@ -36,7 +38,8 @@ const InputField: React.FC<InputFieldProps> = ({
         <input
           type="text"
           placeholder={placeholder}
-          value={value as string}
+          value={value as any}
+          name={name}
           onChange={(e) => onChange(e.target.value)}
           className="p-4 rounded-xl bg-primary-30 w-full text-text-accent"
         />
@@ -45,6 +48,7 @@ const InputField: React.FC<InputFieldProps> = ({
         <textarea
           placeholder={placeholder}
           value={value as string}
+          name={name}
           onChange={(e) => onChange(e.target.value)}
           rows={4}
           className="p-4 rounded-xl bg-primary-30 w-full text-text-accent"
@@ -86,6 +90,7 @@ const InputField: React.FC<InputFieldProps> = ({
           >
             <input
               type="checkbox"
+              name={name}
               checked={value.includes(option)}
               onChange={() => handleSelectChange(option)}
               className="mr-2 bg-black border-white text-white"

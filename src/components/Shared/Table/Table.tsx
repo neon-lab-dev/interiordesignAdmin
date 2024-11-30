@@ -29,6 +29,7 @@ interface TableProps {
     i2: string;
     i3: string;
   };
+  searchPlaceholder?: string;
 }
 
 const formatDate = (date: Date) => {
@@ -46,6 +47,7 @@ const Table: React.FC<TableProps> = ({
   showViewAll,
   enablePagination = false,
   rowsPerPage = 5,
+  searchPlaceholder = "Search...", 
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState<string | null>(null);
@@ -91,8 +93,8 @@ const Table: React.FC<TableProps> = ({
             />
             <input
               type="search"
-              placeholder="Search"
-              className="border-0 md:block outline-0 bg-transparent placeholder:text-text-accent10 placeholder:text-[14px] placeholder:font-normal"
+              placeholder={searchPlaceholder}
+              className="border-0 md:block text-white outline-0 bg-transparent placeholder:text-text-accent10 placeholder:text-[14px] placeholder:font-normal"
             />
           </div>
           <div className="flex items-center justify-between gap-3">
@@ -184,7 +186,7 @@ const Table: React.FC<TableProps> = ({
       {enablePagination && (
         <div className="flex justify-between md:justify-end items-center mt-4">
           <span className="mx-2 font-normal text-[14px] leading-[17px] text-text-accent">
-            Showing {String(startIndex + 1).padStart(2, "0")}-{" "}
+            Showing {data.length==0?"00": String(startIndex + 1).padStart(2, "0")}-{" "}
             {String(Math.min(endIndex, data.length)).padStart(2, "0")} of{" "}
             {data.length}
           </span>

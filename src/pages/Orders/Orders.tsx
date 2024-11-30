@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import Table from "../../components/Shared/Table/Table";
 import Modal from "../../components/Shared/popupModal";
 
@@ -11,15 +12,32 @@ interface Order {
 const Orders = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null); // explicitly set type to allow null
+  const [orders, setOrders] = useState<Order[]>([]); // Store fetched orders
+  const [loading, setLoading] = useState<boolean>(false); // Track loading state
+
+  // Fetch data from the API
+  useEffect(() => {
+    const fetchOrders = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get("https://interior-design-backend-nine.vercel.app/api/v1/admin/orders/");
+        setOrders(response.data); // Assuming the response is an array of orders
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
 
   const handleViewDetails = (id: string) => {
-    // Find the order using the ID
-    const order = tableData.find((order) => order.id === id);
-
-    // Check if the order is found (it's not undefined)
+    const order = orders.find((order) => order.id === id);
     if (order) {
       setSelectedOrder(order); // Set the order to selectedOrder if found
       setModalOpen(true); // Open the modal
+      console.log(id)
     } else {
       setSelectedOrder(null); // If no order found, set to null
     }
@@ -29,14 +47,6 @@ const Orders = () => {
     setModalOpen(false);
     setSelectedOrder(null); // Close the modal and reset the selectedOrder
   };
-
-  const tableData = [
-    { id: "001", totalPrice: "$120.00", orderStatus: "Delivered" },
-    { id: "002", totalPrice: "$85.00", orderStatus: "Shipped" },
-    { id: "003", totalPrice: "$45.50", orderStatus: "Processing" },
-    { id: "004", totalPrice: "$60.75", orderStatus: "Cancelled" },
-    // ...additional data
-  ];
 
   const columns = [
     {
@@ -86,13 +96,17 @@ const Orders = () => {
     },
   ];
 
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
   return (
     <div className="">
       <h1 className="font-normal text-[32px] leading-10 mb-8 text-text-accent">
         Total Orders
       </h1>
       <Table
-        data={tableData}
+        data={orders}
         columns={columns}
         tableName="Order Table"
         showViewAll={true}
@@ -100,6 +114,7 @@ const Orders = () => {
         rowsPerPage={4}
         tableWidth="100%"
         tableHeight="400px"
+        searchPlaceholder="Search by order id or Total price"
       />
       <Modal isOpen={isModalOpen} onClose={closeModal} showCloseButton={false}>
         {selectedOrder ? (
