@@ -1,6 +1,7 @@
 import logo from "./icons/logo.svg";
 import avatar from "./icons/avatar.svg";
 import search from "./icons/search.svg"
+import cross from "./icons/cross.svg"
 
 // dashboard
 import users from "./icons/usres.svg"
@@ -50,5 +51,6 @@ export const ICONS = {
   couponImg,
   close,
   rightArrow,
-  leftArrow
+  leftArrow,
+  cross,
 };

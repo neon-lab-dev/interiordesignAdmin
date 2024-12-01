@@ -38,7 +38,7 @@ const PopupModal: React.FC<PopupModalProps> = ({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-30 z-10">
-      <div ref={modalRef} className="bg-primary-20 p-6 rounded-lg shadow-lg relative w-fit">
+      <div ref={modalRef} className="bg-primary-20 p-6 rounded-lg shadow-lg relative w-fit h-[570px] overflow-y-auto">
         {showCloseButton && (
           <button onClick={onClose} className="absolute top-2 right-2 bg-transparent">
             <img src={ICONS.close} alt="Close" className="h-3 w-3" />
