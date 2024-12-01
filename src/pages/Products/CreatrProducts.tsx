@@ -7,6 +7,7 @@ import InputField2 from "../../components/Shared/InputField2";
 import InputField from "../../components/Shared/InputField";
 import VerifyProducts from "./VerifyProducts";
 import UploadImage from "./UploadImage";
+import axios from "axios";
 
 const CreateProducts: React.FC = () => {
   const {
@@ -55,28 +56,48 @@ const CreateProducts: React.FC = () => {
   const [subCategories, setSubCategories] = useState<File[]>([]);
   const [availableColors, setAvailableColors] = useState<File[]>([]);
 
-  const handleAddProduct = (data: any) => {
-    const formData = new FormData();
-    formData.append("name", data.name);
-    formData.append("description", data.description);
-    formData.append("keyFeatures", data.keyFeatures);
-    formData.append("specification", data.specification);
-    formData.append("color", data.color);
-    formData.append("category", JSON.stringify(categories));
-    formData.append("sub_category", JSON.stringify(subCategories));
-    formData.append("Availablecolor", JSON.stringify(availableColors));
-    formData.append("sizes", JSON.stringify(sizes));
+const handleAddProduct = async (data: any) => {
+  const formData = new FormData();
+  formData.append("name", data.name);
+  formData.append("description", data.description);
+  formData.append("keyFeatures", data.keyFeatures);
+  formData.append("specification", data.specification);
+  formData.append("color", data.color);
+  formData.append("category", JSON.stringify(categories));
+  formData.append("sub_category", JSON.stringify(subCategories));
+  formData.append("Availablecolor", JSON.stringify(availableColors));
+  formData.append("sizes", JSON.stringify(sizes));
 
-    // images
-    for (const image of imageFiles) {
-      formData.append("images", image);
-    }
+  // Images
+  for (const image of imageFiles) {
+    formData.append("images", image);
+  }
 
-    // consoling values
-    for (const [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
-  };
+  // Console log values (optional, for debugging)
+  for (const [key, value] of formData.entries()) {
+    console.log(key, value);
+  }
+
+  
+
+  try {
+    const response = await axios.post(
+      "ttps://interior-design-backend-nine.vercel.app/api/v1/product/createproduct",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true,
+      }
+    );
+
+    console.log("Product added successfully:", response.data);
+  } catch (error) {
+    console.error("Error adding product:", error);
+  }
+};
+
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
