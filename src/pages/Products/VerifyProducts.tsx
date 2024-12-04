@@ -24,7 +24,7 @@ type TVerifyProductsProps = {
 
 const VerifyProducts:React.FC<TVerifyProductsProps> = ({ closeModal, previewData }) => {
   return (
-    <div>
+    <div className="h-[540px] ">
       <div className="w-[656px] flex flex-col gap-4 px-4 py-2 items-center">
         <h1 className="text-text-accent text-[24px] text-center leading-[30px] pl-[33px]">
           Verification Details

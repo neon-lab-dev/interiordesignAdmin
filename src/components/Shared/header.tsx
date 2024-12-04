@@ -41,15 +41,8 @@ const Header = () => {
   }, []); // Empty dependency array ensures it runs only once on mount
 
   return (
-    <div className="flex justify-between mb-4 py-4 bg-primary-20">
-      <div className="p-1 px-5 bg-primary-30 w-[338px] h-[38px] flex gap-2 ml-[78px] items-center rounded-full">
-        <img src={ICONS.search} alt="Search Icon" className="w-[16px] h-[15px]" />
-        <input
-          type="search"
-          placeholder="Search"
-          className="border-0 md:block outline-0 bg-transparent placeholder:text-text-accent10 placeholder:text-[14px] placeholder:font-normal"
-        />
-      </div>
+    <div className="flex justify-end mb-4 py-4 bg-primary-20">
+      
       <div className="flex w-fit mx-7">
         <div>
           <img src={ICONS.avatar} alt="avatar" className="w-11 h-11 mr-4 bg-white rounded-full" />

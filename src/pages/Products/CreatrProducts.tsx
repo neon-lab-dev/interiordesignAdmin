@@ -66,7 +66,13 @@ const handleAddProduct = async (data: any) => {
   formData.append("category", JSON.stringify(categories));
   formData.append("sub_category", JSON.stringify(subCategories));
   formData.append("Availablecolor", JSON.stringify(availableColors));
-  formData.append("sizes", JSON.stringify(sizes));
+  sizes.forEach((size, index) => {
+    formData.append(`sizes[${index}][size]`, size.size);
+    formData.append(`sizes[${index}][basePrice]`, size.basePrice);
+    formData.append(`sizes[${index}][discountedPercent]`, size.discountedPercent);
+    formData.append(`sizes[${index}][stock]`, size.stock);
+  });
+  
 
   // Images
   for (const image of imageFiles) {
@@ -82,19 +88,19 @@ const handleAddProduct = async (data: any) => {
 
   try {
     const response = await axios.post(
-      "ttps://interior-design-backend-nine.vercel.app/api/v1/product/createproduct",
+      "https://interior-design-backend-nine.vercel.app/api/v1/createproduct",
       formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        withCredentials: true,
-      }
+      { withCredentials: true }
     );
-
     console.log("Product added successfully:", response.data);
-  } catch (error) {
-    console.error("Error adding product:", error);
+  } catch (error: any) {
+    if (error.response) {
+      console.error("Server responded with error:", error.response.data);
+    } else if (error.request) {
+      console.error("No response from server:", error.request);
+    } else {
+      console.error("Error setting up request:", error.message);
+    }
   }
 };
 
@@ -301,6 +307,7 @@ const handleAddProduct = async (data: any) => {
             onChange={(newValues) => {
               setCategories(Array.isArray(newValues) ? newValues : [newValues]);
             }}
+            isMulti={false}
           />
           <InputField
             type="select"
@@ -314,6 +321,7 @@ const handleAddProduct = async (data: any) => {
                 Array.isArray(newValues) ? newValues : [newValues]
               );
             }}
+            isMulti={false}
           />
 
           <InputField

@@ -51,16 +51,20 @@ const Table: React.FC<TableProps> = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  
 
   const handleFilterSelect = (selectedOption: string) => {
     setFilter(selectedOption === "All" ? null : selectedOption);
   };
 
-  const filteredData = filter
-    ? data.filter(
-        (row) => row.orderStatus.toLowerCase() === filter.toLowerCase()
-      )
-    : data;
+  const filteredData = data
+  .filter((row) =>
+    filter ? row.orderStatus.toLowerCase() === filter.toLowerCase() : true
+  )
+  .filter((row) =>
+    searchQuery ? String(row._id).includes(searchQuery.trim()) : true
+  );
 
   const totalPages = enablePagination
     ? Math.ceil(filteredData.length / rowsPerPage)
@@ -95,6 +99,7 @@ const Table: React.FC<TableProps> = ({
               type="search"
               placeholder={searchPlaceholder}
               className="border-0 md:block text-white outline-0 bg-transparent placeholder:text-text-accent10 placeholder:text-[14px] placeholder:font-normal"
+              onChange={(e) => setSearchQuery(e.target.value)} 
             />
           </div>
           <div className="flex items-center justify-between gap-3">
