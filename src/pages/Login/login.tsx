@@ -53,7 +53,7 @@ import axios from "axios";
     
   
   return (
-    <div className="bg-primary-10 w-screen h-screen justify-center p-[86px] flex ">
+    <div className="bg-primary-10 w-screen h-svh pt-16 justify-center flex ">
       <div className="bg-primary-20 p-16 h-fit rounded-3xl items-center flex-col flex w-[888px]">
         <div>
           <img src={ICONS.logo} className="h-[128px] w-[128px]" />

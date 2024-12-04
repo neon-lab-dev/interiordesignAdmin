@@ -1,27 +1,92 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import Table from "../../components/Shared/Table/Table";
 import Modal from "../../components/Shared/popupModal";
 
-interface Order {
-  id: string;
-  totalPrice: string;
-  orderStatus: string;
+interface ShippingInfo {
+  landmark: string;
+  address: string;
+  city: string;
+  state: string;
+  pinCode: number;
+  phoneNo: number;
+}
+interface OrderItem {
+  name: string;
+  price: number;
+  quantity: number;
+  image: string;
+  color: string;
+  size: string;
+  product: string;
+  _id: string;
 }
 
+interface Order {
+  _id: string;
+  shippingInfo: ShippingInfo;
+  orderItems: OrderItem[];
+  userId: string;
+  paidAt: string;
+  itemsPrice: number;
+  totalPrice: number;
+  discount: number;
+  orderStatus: string;
+  razorpay_payment_id: string;
+  createdAt: string;
+  __v: number;
+  deliveredAt?: string; // Optional because it may not exist in some orders
+}
+
+interface User {
+  name: string;
+  phoneNo: string;
+  email: string;
+}
 const Orders = () => {
   const [isModalOpen, setModalOpen] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null); // explicitly set type to allow null
-  const [orders, setOrders] = useState<Order[]>([]); // Store fetched orders
-  const [loading, setLoading] = useState<boolean>(false); // Track loading state
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null); 
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [userDetails, setUserDetails] = useState<User | null>(null);
+  const [status, setStatus] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false); 
 
   // Fetch data from the API
   useEffect(() => {
     const fetchOrders = async () => {
       setLoading(true);
       try {
-        const response = await axios.get("https://interior-design-backend-nine.vercel.app/api/v1/admin/orders/");
-        setOrders(response.data); // Assuming the response is an array of orders
+        const token = localStorage.getItem("adminToken");
+        if (!token) {
+          console.error("No token found. User is not logged in.");
+          return;
+        }
+
+        const response = await fetch(
+          "https://interior-design-backend-nine.vercel.app/api/v1/admin/orders/",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && Array.isArray(data.orders)) {
+            setOrders(data.orders);
+          } else {
+            console.error("Unexpected response format:", data);
+          }
+        } else {
+          console.error(
+            "Failed to fetch orders:",
+            response.status,
+            response.statusText
+          );
+        }
       } catch (error) {
         console.error("Error fetching orders:", error);
       } finally {
@@ -32,26 +97,128 @@ const Orders = () => {
     fetchOrders();
   }, []);
 
+  // Fetch user details when the selected order changes
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      if (!selectedOrder) return;
+
+      const { userId } = selectedOrder;
+      try {
+        const token = localStorage.getItem("adminToken");
+        if (!token) {
+          console.error("No token found. User is not logged in.");
+          return;
+        }
+
+        const response = await fetch(
+          `https://interior-design-backend-nine.vercel.app/api/v1/admin/user/${userId}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.user) {
+            setUserDetails(data.user); // Assuming `data.user` contains user details
+          } else {
+            console.error("Unexpected response format:", data);
+          }
+        } else {
+          console.error(
+            "Failed to fetch user details:",
+            response.status,
+            response.statusText
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    };
+
+    fetchUserDetails();
+  }, [selectedOrder]);
+
   const handleViewDetails = (id: string) => {
-    const order = orders.find((order) => order.id === id);
+    const order = orders.find((order) => order._id === id);
     if (order) {
-      setSelectedOrder(order); // Set the order to selectedOrder if found
-      setModalOpen(true); // Open the modal
-      console.log(id)
+      setSelectedOrder(order);
+      setModalOpen(true);
     } else {
-      setSelectedOrder(null); // If no order found, set to null
+      console.error("No order found for ID:", id);
     }
   };
-
+  
   const closeModal = () => {
     setModalOpen(false);
-    setSelectedOrder(null); // Close the modal and reset the selectedOrder
+    setSelectedOrder(null);
+    setUserDetails(null); 
+    setStatus("");
+  };
+  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setStatus(e.target.value);
+  };
+
+  const updateOrderStatus = async () => {
+    if (!selectedOrder) return;
+
+    try {
+      const token = localStorage.getItem("adminToken");
+      if (!token) {
+        console.error("No token found. User is not logged in.");
+        return;
+      }
+
+      const response = await fetch(
+        `https://interior-design-backend-nine.vercel.app/api/v1/admin/order/${selectedOrder._id}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({ status }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          // Update the orders state
+          setOrders((prevOrders) =>
+            prevOrders.map((order) =>
+              order._id === selectedOrder._id
+                ? { ...order, orderStatus: status }
+                : order
+            )
+          );
+          closeModal(); // Close modal after successful update
+          console.log("Order status updated successfully!");
+        } else {
+          console.error("Unexpected response format:", data);
+        }
+      } else {
+        console.error(
+          "Failed to update order status:",
+          response.status,
+          response.statusText
+        );
+      }
+    } catch (error) {
+      console.error("Error updating order status:", error);
+    }
   };
 
   const columns = [
     {
       header: "ID",
-      accessor: "id",
+      accessor: "_id",
       width: "180px",
       cellClassName: "font-normal text-[14px] leading-[17px] text-text-accent",
     },
@@ -88,7 +255,7 @@ const Orders = () => {
       cellRenderer: (row: any) => (
         <button
           className="px-3 py-1 text-accent-40 border-accent-40 bg-transparent rounded-[4px] font-normal text-[14px] leading-[17px]"
-          onClick={() => handleViewDetails(row.id)}
+          onClick={() => handleViewDetails(row._id)}
         >
           View Details
         </button>
@@ -125,36 +292,36 @@ const Orders = () => {
                 <p className="text-center text-text-accent text-[18px] leading-[21px] pb-4">
                   Order Items
                 </p>
-                {/* First Item */}
-                <div className=" flex flex-col gap-2">
-                  <div className="w-[226px] h-[229px] rounded-2xl  bg-primary-30"></div>
-                  <p className="text-text-accent text-[14px] leading-[17px] font-normal">
-                    Poise Study Chair with Net Back
-                  </p>
-                  <div className="flex justify-between w-full mt-2">
-                    <p className="text-text-accent text-[14px] leading-[17px]  font-normal">
-                      Price:{" "}
-                      <span className="text-[12px] leading-[15px] text-text-tertiary">
-                        ₹1500{}
-                      </span>
+                {selectedOrder.orderItems.map((item, index) => (
+                  <div className=" flex flex-col gap-2" key={index}>
+                    <div className="w-full  rounded-2xl  bg-primary-30">
+                      <img className="rounded-2xl" src={item.image} alt={item.name} />
+                    </div>
+                    <p className="text-text-accent text-[14px] leading-[17px] font-normal">
+                      {item.name}
                     </p>
+                    <div className="flex justify-between w-full mt-2">
+                      <p className="text-text-accent text-[14px] leading-[17px]  font-normal">
+                        Price:
+                        <span className="text-[12px] leading-[15px] text-text-tertiary">
+                          ₹{item.price}
+                        </span>
+                      </p>
+                      <p className="text-text-accent text-[14px] leading-[17px]  font-normal">
+                        Qty:
+                        <span className="text-[12px] leading-[15px] text-text-tertiary">
+                          {item.quantity}
+                        </span>
+                      </p>
+                    </div>
                     <p className="text-text-accent text-[14px] leading-[17px]  font-normal">
-                      Qty:{" "}
+                      Product ID:{" "}
                       <span className="text-[12px] leading-[15px] text-text-tertiary">
-                        1{}
+                        {item.product}
                       </span>
                     </p>
                   </div>
-                  <p className="text-text-accent text-[14px] leading-[17px]  font-normal">
-                    Product ID:{" "}
-                    <span className="text-[12px] leading-[15px] text-text-tertiary">
-                      65e03542ff44552qgfg{}
-                    </span>
-                  </p>
-                </div>
-                <div className=" flex flex-col  gap-2">
-                  <div className="w-[226px] h-[229px] rounded-2xl  bg-primary-30"></div>
-                </div>
+                ))}
               </div>
 
               {/* Order Information Section */}
@@ -164,42 +331,42 @@ const Orders = () => {
                 </p>
                 <div className="border-b-2 border-border-40 w-[435px] border-dashed flex flex-col gap-3 pb-4 mb-4">
                   <p className="text-[14px] leading-[17px] text-text-accent">
-                    Address:{" "}
+                    Address:
                     <span className="text-[12px] leading-[15px] text-text-tertiary">
-                      {}Tulsipur 4 Banahari Dang
+                    {selectedOrder.shippingInfo.address}
                     </span>{" "}
                   </p>
                   <p className="text-[14px] leading-[17px] text-text-accent">
                     Landmark:
                     <span className="text-[12px] leading-[15px] text-text-tertiary">
-                      Purvanchal Campus abc{}
+                    {selectedOrder.shippingInfo.landmark}
                     </span>
                   </p>
                   <div className="flex justify-between">
                     <p className="text-[14px] leading-[17px] text-text-accent">
                       State:
                       <span className="text-[12px] leading-[15px] text-text-tertiary">
-                        Lumbini{}
+                      {selectedOrder.shippingInfo.state}
                       </span>{" "}
                     </p>
                     <p className="text-[14px] leading-[17px] text-text-accent">
                       City:{" "}
                       <span className="text-[12px] leading-[15px] text-text-tertiary">
-                        Tulsipur{}
+                      {selectedOrder.shippingInfo.city}
                       </span>
                     </p>
                     <p className="text-[14px] leading-[17px] text-text-accent">
                       Country:
                       <span className="text-[12px] leading-[15px] text-text-tertiary">
-                        India{}
+                        India
                       </span>{" "}
                     </p>
                   </div>
                   <p className="text-[14px] leading-[17px] text-text-accent ">
                     Pin Code:
                     <span className="text-[12px] leading-[15px] text-text-tertiary">
-                      {" "}
-                      22200{}
+                    
+                    {selectedOrder.shippingInfo.pinCode}
                     </span>
                   </p>
                 </div>
@@ -207,19 +374,19 @@ const Orders = () => {
                   <p className="text-[14px] leading-[17px] text-text-accent">
                     Items Price:
                     <span className="text-[12px] leading-[15px] text-text-tertiary">
-                      ₹1500{}
+                    ₹{selectedOrder.itemsPrice}
                     </span>{" "}
                   </p>
                   <p className="text-[14px] leading-[17px] text-text-accent">
                     Discount:
                     <span className="text-[12px] leading-[15px] text-text-tertiary">
-                      ₹0{}
+                      ₹{selectedOrder.discount}
                     </span>{" "}
                   </p>
                   <p className="text-[14px] leading-[17px] text-text-accent">
                     Total Price:
                     <span className="text-[12px] leading-[15px] text-text-tertiary">
-                      ₹0{}
+                      ₹ {selectedOrder.totalPrice}
                     </span>{" "}
                   </p>
                 </div>
@@ -228,13 +395,13 @@ const Orders = () => {
                     <p className="text-[14px] leading-[17px] text-text-accent">
                       User Name:
                       <span className="text-[12px] leading-[15px] text-text-tertiary">
-                        Test 12345{}
-                      </span>{" "}
+                      {userDetails?.name || "N/A"}
+                      </span>
                     </p>
                     <p className="text-[14px] leading-[17px] text-text-accent">
                       Phone No:
                       <span className="text-[12px] leading-[15px] text-text-tertiary">
-                        9545854125{}
+                      {userDetails?.phoneNo || "N/A"}
                       </span>{" "}
                     </p>
                   </div>
@@ -242,25 +409,36 @@ const Orders = () => {
                   <p className="text-[14px] leading-[17px] ">
                     User Email:
                     <span className="text-[12px] leading-[15px] text-text-tertiary">
-                      Test.12345@gmail.com{}
+                    {userDetails?.email || "N/A"}
                     </span>{" "}
                   </p>
                 </div>
                 <div className="pb-4 w-[435px]">
-                  <p className="text-[14px] leading-[17px] ">
-                    Order Status: <span className="text-error">Processing</span>
-                  </p>
-                </div>
-                <select className="w-[435px] bg-primary-30 text-text-accent p-2 rounded-lg h-10 p-2">
-                  <option>Choose Status</option>
-                  <option>Shipped</option>
-                  <option>Delivered</option>
-                  <option>Cancelled</option>
-                </select>
+  <p className="text-[14px] leading-[17px]">
+    Order Status: 
+    <span className="text-error">
+      {status ? status : selectedOrder.orderStatus}
+    </span>
+  </p>
+</div>
+                <select
+                className="w-[435px] bg-primary-30 text-text-accent p-2 rounded-lg h-10 p-2"
+                value={status}
+                onChange={handleStatusChange}
+              >
+                <option value="" disabled>
+                  Choose Status
+                </option>
+                <option value="Processing">Processing</option>
+      <option value="Shipped">Shipped</option>
+      <option value="Delivered">Delivered</option>
+      <option value="Cancelled">Cancelled</option>
+              </select>
 
                 {/* Process Order Section */}
                 <div className="flex w-[435px] items-center gap-4 mt-4">
-                  <button className="bg-accent-30 text-white py-2 px-4 h-[50px] rounded-md w-full">
+                  <button className="bg-accent-30 text-white py-2 px-4 h-[50px] rounded-md w-full" onClick={updateOrderStatus}
+                  disabled={!status}>
                     Process
                   </button>
                   <button className="bg-primary-50 text-white py-2 px-4 h-[50px] rounded-md w-full">

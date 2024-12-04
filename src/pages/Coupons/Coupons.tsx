@@ -206,7 +206,7 @@ const Coupons: React.FC = () => {
       )}
 
       <Modal isOpen={isModalOpen} onClose={closeModal} showCloseButton={true}>
-        <div className="w-[763px]">
+        <div className="w-[763px] h-fit">
           <div className="flex p-6">
             <div className="flex pr-[33px] items-center justify-center border-r-2 border-dashed border-border-40">
               <img
