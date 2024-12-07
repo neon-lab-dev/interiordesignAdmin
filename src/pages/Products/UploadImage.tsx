@@ -16,6 +16,7 @@ const UploadImage:React.FC<TUploadImageProps> = ({handleImageChange, imagePrevie
         <div className="h-[453px] w-[453px] border-[1px] border-border-10 rounded-xl flex justify-center items-center overflow-hidden">
           <label className="flex flex-col items-center cursor-pointer">
             <input
+            required
               multiple
               type="file"
               accept="image/*"

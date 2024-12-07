@@ -5,6 +5,7 @@ interface InputBoxProps {
   placeholder?: string;
   value?: string;
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
+  type?:string
 }
 
 const InputBox: React.FC<InputBoxProps> = ({
@@ -12,6 +13,7 @@ const InputBox: React.FC<InputBoxProps> = ({
   placeholder = "",
   value = "",
   onChange,
+  type=""
 }) => {
   return (
     <div className="w-full">
@@ -22,7 +24,7 @@ const InputBox: React.FC<InputBoxProps> = ({
         {label}
       </label>
       <input
-        type="text"
+         type={type} 
         id="input"
         value={value}
         onChange={onChange}

@@ -1,15 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Button from "../../components/Shared/button";
 import Modal from "../../components/Shared/popupModal";
 import { useForm } from "react-hook-form";
 import InputField2 from "../../components/Shared/InputField2";
-import InputField from "../../components/Shared/InputField";
+import InputField from "../../components/Shared/inputField";
 import VerifyProducts from "./VerifyProducts";
 import UploadImage from "./UploadImage";
 import axios from "axios";
 
 const CreateProducts: React.FC = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -52,58 +54,58 @@ const CreateProducts: React.FC = () => {
     setCurrentSize((prev) => ({ ...prev, [name]: value }));
   };
 
-  const [categories, setCategories] = useState<File[]>([]);
+  const [categories, setCategories] = useState<string>("");
   const [subCategories, setSubCategories] = useState<File[]>([]);
   const [availableColors, setAvailableColors] = useState<File[]>([]);
 
-const handleAddProduct = async (data: any) => {
-  const formData = new FormData();
-  formData.append("name", data.name);
-  formData.append("description", data.description);
-  formData.append("keyFeatures", data.keyFeatures);
-  formData.append("specification", data.specification);
-  formData.append("color", data.color);
-  formData.append("category", JSON.stringify(categories));
-  formData.append("sub_category", JSON.stringify(subCategories));
-  formData.append("Availablecolor", JSON.stringify(availableColors));
-  sizes.forEach((size, index) => {
-    formData.append(`sizes[${index}][size]`, size.size);
-    formData.append(`sizes[${index}][basePrice]`, size.basePrice);
-    formData.append(`sizes[${index}][discountedPercent]`, size.discountedPercent);
-    formData.append(`sizes[${index}][stock]`, size.stock);
-  });
-  
+  const handleAddProduct = async (data: any) => {
+    const formData = new FormData();
+    formData.append("name", data.name);
+    formData.append("description", data.description);
+    formData.append("keyFeatures", data.keyFeatures);
+    formData.append("specification", data.specification);
+    formData.append("color", data.color);
+    formData.append("category", JSON.stringify(categories));
+    formData.append("sub_category", JSON.stringify(subCategories));
+    formData.append("Availablecolor", JSON.stringify(availableColors));
+    sizes.forEach((size, index) => {
+      formData.append(`sizes[${index}][size]`, size.size);
+      formData.append(`sizes[${index}][basePrice]`, size.basePrice);
+      formData.append(
+        `sizes[${index}][discountedPercent]`,
+        size.discountedPercent
+      );
+      formData.append(`sizes[${index}][stock]`, size.stock);
+    });
 
-  // Images
-  for (const image of imageFiles) {
-    formData.append("images", image);
-  }
-
-  // Console log values (optional, for debugging)
-  for (const [key, value] of formData.entries()) {
-    console.log(key, value);
-  }
-
-  
-
-  try {
-    const response = await axios.post(
-      "https://interior-design-backend-nine.vercel.app/api/v1/createproduct",
-      formData,
-      { withCredentials: true }
-    );
-    console.log("Product added successfully:", response.data);
-  } catch (error: any) {
-    if (error.response) {
-      console.error("Server responded with error:", error.response.data);
-    } else if (error.request) {
-      console.error("No response from server:", error.request);
-    } else {
-      console.error("Error setting up request:", error.message);
+    // Images
+    for (const image of imageFiles) {
+      formData.append("images", image);
     }
-  }
-};
 
+    // Console log values (optional, for debugging)
+    for (const [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+
+    try {
+      const response = await axios.post(
+        "https://interior-design-backend-nine.vercel.app/api/v1/createproduct",
+        formData,
+        { withCredentials: true }
+      );
+      console.log("Product added successfully:", response.data);
+      navigate("/products");
+    } catch (error: any) {
+      if (error.response) {
+        console.error("Server responded with error:", error.response.data);
+      } else if (error.request) {
+        console.error("No response from server:", error.request);
+      } else {
+        console.error("Error setting up request:", error.message);
+      }
+    }
+  };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -154,9 +156,9 @@ const handleAddProduct = async (data: any) => {
   const closeModal = () => setIsModalOpen(false);
 
   return (
-    <div className="flex flex-col justify-center py-7 m-6 bg-primary-20 rounded-[10px]">
+    <div className="flex flex-col justify-center py-7  px-10 m-6 bg-primary-20 rounded-[10px]">
       <h1 className="font-normal text-center text-[32px] leading-10 mb-8 text-text-accent">
-        Update Product
+        Create Product
       </h1>
       <form className="flex" onSubmit={handleSubmit(handleAddProduct)}>
         <div className="border-r-2 border-dashed h-full  border-border-10 flex flex-col pr-10">
@@ -300,12 +302,12 @@ const handleAddProduct = async (data: any) => {
           <InputField
             type="select"
             value={categories}
-            options={["Option 1", "Option 2", "Option 3"]}
+            options={["Bed sheet", "Chairs", "Tables"]}
             placeholder="Categories"
             name="category"
             className="w-[513px] h-[44px] mb-7"
             onChange={(newValues) => {
-              setCategories(Array.isArray(newValues) ? newValues : [newValues]);
+              setCategories(newValues);
             }}
             isMulti={false}
           />

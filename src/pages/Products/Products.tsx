@@ -9,26 +9,28 @@ const Products = () => {
   const [productData, setProductData] = useState<any[]>([]); // State to hold the product data
   const [loading, setLoading] = useState<boolean>(true); // Loading state
   const [error, setError] = useState<string>(""); // Error state
+  const [reload,setReload]=useState<boolean>(false)
 
   // Function to handle viewing a product
-  const handleViewProduct = (productId: number) => {
-    alert(`View product with ID: ${productId}`);
-    // Add logic to open a modal or navigate to a product detail page
-  };
+    const handleEditProduct = (productId: string) => {
+      navigate(`/products/update-product/${productId}`);
+    };
+
 
   // Function to handle deleting a product
   const handleDeleteProduct = async (productId: string) => {
-    if (!window.confirm("Are you sure you want to delete this product?")) {
+    if (!window.confirm(`Are you sure you want to delete this product ${productId}?`)) {
       return;
     }
-
+  
     try {
       const token = localStorage.getItem("adminToken");
       if (!token) {
         console.error("No token found. User is not logged in.");
+        alert("Authentication error. Please log in.");
         return;
       }
-
+  
       const response = await fetch(
         `https://interior-design-backend-nine.vercel.app/api/v1/product/${productId}`,
         {
@@ -40,21 +42,20 @@ const Products = () => {
           credentials: "include",
         }
       );
-
+  
       if (response.ok) {
-        alert("Product deleted successfully!");
+        setReload((prev) => !prev); // Trigger re-fetch of data
       } else {
         const errorData = await response.json();
         console.error("API Error Response:", errorData);
-        alert(
-          `Failed to delete product: ${errorData.message || "Unknown error"}`
-        );
+        alert(`Failed to delete product: ${errorData.message || "Unknown error"}`);
       }
     } catch (error) {
       console.error("Failed to delete product:", error);
       alert("An error occurred while deleting the product.");
     }
   };
+  
 
   // Define table columns
   const columns = [
@@ -76,7 +77,7 @@ const Products = () => {
       width: "10%",
       cellRenderer: (row: any) => (
         <img
-          src={row.images?.[0]?.url || "placeholder.jpg"} // Adjust index if necessary
+          src={row.images?.[0]?.url || "placeholder.jpg"}
           alt={row.name}
           className="w-20 h-24 object-cover"
         />
@@ -113,7 +114,7 @@ const Products = () => {
         <div className="flex gap-2">
           <button
             className="px-3 py-1 text-accent-40 border-accent-40 bg-transparent rounded-[4px] font-normal text-[14px] leading-[17px]"
-            onClick={() => handleViewProduct(row._id)}
+            onClick={() => handleEditProduct(row._id)}
           >
             View
           </button>
@@ -167,11 +168,11 @@ const Products = () => {
     };
 
     fetchProductsData(); // Call the function to fetch user data
-  }, []); // Empty dependency array ensures the effect runs only once when the component mounts
+  }, [reload]); // Empty dependency array ensures the effect runs only once when the component mounts
 
   // Handle the "Create Product" button click
   const handleCreateProduct = () => {
-    navigate("/products/createProduct");
+    navigate("/products/create-product");
   };
 
   return (

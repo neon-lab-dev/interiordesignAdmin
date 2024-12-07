@@ -10,7 +10,7 @@ type TInputFieldProps= {
   required?: boolean;
   error?: FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined;
   register?: UseFormRegisterReturn;
-  value?:string;
+  value?:any;
   onChange?:any
 }
 
@@ -34,7 +34,7 @@ const InputField2: React.FC<TInputFieldProps> = ({
         placeholder={placeholder}
         type={type}
         {...register}
-        className="p-4 rounded-xl bg-primary-30 w-full text-text-accent"
+        className="p-4 rounded-xl bg-primary-30 w-full text-text-accent "
       />
       {error && <p className="text-red-500 text-sm">{error.message as string}</p>}
     </div>

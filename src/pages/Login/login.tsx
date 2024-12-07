@@ -63,12 +63,14 @@ import axios from "axios";
         </h2>
         <div className="space-y-6 pb-9">
           <InputBox
+          type="text" 
             label="User name"
             placeholder="Enter your user name"
             value={userName}
             onChange={(e) => setUserName(e.target.value)}
           />
           <InputBox
+          type="password" 
             label="Password"
             placeholder="Enter your password"
             value={password}
