@@ -30,6 +30,7 @@ import axios from "axios";
   
         console.log(response.status);
         if (response.data.success === true) {
+          localStorage.setItem("isLoggedIn", "true");
           console.log("Login successful");
           navigate("/dashboard"); // Navigate to the dashboard
         } else {
@@ -63,14 +64,13 @@ import axios from "axios";
         </h2>
         <div className="space-y-6 pb-9">
           <InputBox
-          type="text" 
             label="User name"
             placeholder="Enter your user name"
             value={userName}
             onChange={(e) => setUserName(e.target.value)}
           />
           <InputBox
-          type="password" 
+          type="password"
             label="Password"
             placeholder="Enter your password"
             value={password}

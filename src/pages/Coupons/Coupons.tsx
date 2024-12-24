@@ -3,9 +3,8 @@ import { ICONS } from "../../assets";
 import Table from "../../components/Shared/Table/Table";
 import Modal from "../../components/Shared/popupModal";
 import Button from "../../components/Shared/button";
-import InputField from "../../components/Shared/InputField";
+import InputField from "../../components/Shared/inputField";
 import axios from "axios";
-import { findAllInRenderedTree } from "react-dom/test-utils";
 
 interface Coupon {
   _id: number;

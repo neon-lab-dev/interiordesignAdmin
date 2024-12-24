@@ -13,7 +13,6 @@ const UpdateProduct: React.FC = () => {
   const [product, setProduct] = useState<any>(null);
   const [imageFiles, setImageFiles] = useState<File[] | []>([]);
   const [imagePreviews, setImagePreviews] = useState<string[] | []>([]);
-  const [categories, setCategories] = useState<string>("");
   // Fetch product details on component load
   useEffect(() => {
     const fetchProduct = async () => {

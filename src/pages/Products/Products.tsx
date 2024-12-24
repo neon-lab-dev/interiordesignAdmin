@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Table from "../../components/Shared/Table/Table"; // Adjust the path as needed
 import Button from "../../components/Shared/button";
 import { ICONS } from "../../assets";
-import { useNavigate } from "react-router-dom";
+import { useNavigate ,useLocation} from "react-router-dom";
 
 const Products = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [productData, setProductData] = useState<any[]>([]); // State to hold the product data
   const [loading, setLoading] = useState<boolean>(true); // Loading state
-  const [error, setError] = useState<string>(""); // Error state
+  const [error] = useState<string>(""); // Error state
   const [reload,setReload]=useState<boolean>(false)
 
   // Function to handle viewing a product
@@ -168,7 +169,7 @@ const Products = () => {
     };
 
     fetchProductsData(); // Call the function to fetch user data
-  }, [reload]); // Empty dependency array ensures the effect runs only once when the component mounts
+  }, [reload,location.pathname]); // Empty dependency array ensures the effect runs only once when the component mounts
 
   // Handle the "Create Product" button click
   const handleCreateProduct = () => {

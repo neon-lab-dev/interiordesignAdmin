@@ -1,4 +1,3 @@
-// App.tsx
 import {
   BrowserRouter as Router,
   Routes,
@@ -14,6 +13,7 @@ import Products from "./pages/Products/Products";
 import CreateProducts from "./pages/Products/CreatrProducts";
 import Coupons from "./pages/Coupons/Coupons";
 import UpdateProduct from "./pages/Products/UpdateProduct";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 
 function App() {
   return (
@@ -21,7 +21,16 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/*" element={<DashboardLayout />}>
+        {/* Protected Routes */}
+        <Route
+          path="/*"
+          element={
+            <ProtectedRoute>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }
+        >
+          {/* Nested Routes */}
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="orders" element={<Orders />} />
           <Route path="users" element={<Users />} />
@@ -29,7 +38,6 @@ function App() {
           <Route path="products/create-product" element={<CreateProducts />} />
           <Route path="products/update-product/:productId" element={<UpdateProduct />} />
           <Route path="coupons" element={<Coupons />} />
-          {/* Add more routes here */}
         </Route>
       </Routes>
     </Router>
