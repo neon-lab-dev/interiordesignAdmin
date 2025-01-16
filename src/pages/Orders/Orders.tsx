@@ -45,27 +45,25 @@ interface User {
 }
 const Orders = () => {
   const [isModalOpen, setModalOpen] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null); 
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [userDetails, setUserDetails] = useState<User | null>(null);
   const [status, setStatus] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false); 
+  const [loading, setLoading] = useState<boolean>(false);
 
   // Fetch data from the API
   useEffect(() => {
     const fetchOrders = async () => {
       setLoading(true);
       try {
-
         const response = await axios.get(
           "https://interior-design-backend-nine.vercel.app/api/v1/admin/orders/",
           {
-           withCredentials:true}
+            withCredentials: true,
+          }
         );
         // console.log(response);
-        setOrders(response.data.orders)
-        
-       
+        setOrders(response.data.orders);
       } catch (error) {
         console.error("Error fetching orders:", error);
       } finally {
@@ -81,40 +79,16 @@ const Orders = () => {
     const fetchUserDetails = async () => {
       if (!selectedOrder) return;
 
-      const { userId } = selectedOrder;
+      const { user } = selectedOrder;
+      console.log(user)
       try {
-        const token = localStorage.getItem("adminToken");
-        if (!token) {
-          console.error("No token found. User is not logged in.");
-          return;
-        }
-
-        const response = await fetch(
-          `https://interior-design-backend-nine.vercel.app/api/v1/admin/user/${userId}`,
+        const response = await axios.get(
+          `https://interior-design-backend-nine.vercel.app/api/v1/admin/user/${user}`,
           {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
+            withCredentials: true,
           }
         );
-
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success && data.user) {
-            setUserDetails(data.user); // Assuming `data.user` contains user details
-          } else {
-            console.error("Unexpected response format:", data);
-          }
-        } else {
-          console.error(
-            "Failed to fetch user details:",
-            response.status,
-            response.statusText
-          );
-        }
+        console.log(response);
       } catch (error) {
         console.error("Error fetching user details:", error);
       }
@@ -126,17 +100,18 @@ const Orders = () => {
   const handleViewDetails = (id: string) => {
     const order = orders.find((order) => order._id === id);
     if (order) {
-      setSelectedOrder(order);
+      setSelectedOrder(order)
       setModalOpen(true);
     } else {
       console.error("No order found for ID:", id);
     }
   };
-  
+  console.log(selectedOrder)
+
   const closeModal = () => {
     setModalOpen(false);
     setSelectedOrder(null);
-    setUserDetails(null); 
+    setUserDetails(null);
     setStatus("");
   };
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -144,51 +119,25 @@ const Orders = () => {
   };
 
   const updateOrderStatus = async () => {
-    if (!selectedOrder) return;
-
+    // if (!selectedOrder) return;
+    console.log(selectedOrder)
     try {
-      const token = localStorage.getItem("adminToken");
-      if (!token) {
-        console.error("No token found. User is not logged in.");
-        return;
-      }
 
-      const response = await fetch(
-        `https://interior-design-backend-nine.vercel.app/api/v1/admin/order/${selectedOrder._id}`,
+      const response = await axios.put(
+        `https://interior-design-backend-nine.vercel.app/api/v1/admin/order/${selectedOrder?._id}`,
         {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({ status }),
+          withCredentials: true,
         }
       );
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success) {
-          // Update the orders state
-          setOrders((prevOrders) =>
-            prevOrders.map((order) =>
-              order._id === selectedOrder._id
+      console.log(response);
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+              order._id === selectedOrder?._id
                 ? { ...order, orderStatus: status }
                 : order
             )
           );
-          closeModal(); // Close modal after successful update
-          console.log("Order status updated successfully!");
-        } else {
-          console.error("Unexpected response format:", data);
-        }
-      } else {
-        console.error(
-          "Failed to update order status:",
-          response.status,
-          response.statusText
-        );
-      }
+      closeModal();
     } catch (error) {
       console.error("Error updating order status:", error);
     }
@@ -274,7 +223,11 @@ const Orders = () => {
                 {selectedOrder.orderItems.map((item, index) => (
                   <div className=" flex flex-col gap-2" key={index}>
                     <div className="w-full  rounded-2xl  bg-primary-30">
-                      <img className="rounded-2xl" src={item.image} alt={item.name} />
+                      <img
+                        className="rounded-2xl"
+                        src={item.image}
+                        alt={item.name}
+                      />
                     </div>
                     <p className="text-text-accent text-[14px] leading-[17px] font-normal">
                       {item.name}
@@ -312,26 +265,26 @@ const Orders = () => {
                   <p className="text-[14px] leading-[17px] text-text-accent">
                     Address:
                     <span className="text-[12px] leading-[15px] text-text-tertiary">
-                    {selectedOrder.shippingInfo.address}
+                      {selectedOrder.shippingInfo.address}
                     </span>{" "}
                   </p>
                   <p className="text-[14px] leading-[17px] text-text-accent">
                     Landmark:
                     <span className="text-[12px] leading-[15px] text-text-tertiary">
-                    {selectedOrder.shippingInfo.landmark}
+                      {selectedOrder.shippingInfo.landmark}
                     </span>
                   </p>
                   <div className="flex justify-between">
                     <p className="text-[14px] leading-[17px] text-text-accent">
                       State:
                       <span className="text-[12px] leading-[15px] text-text-tertiary">
-                      {selectedOrder.shippingInfo.state}
+                        {selectedOrder.shippingInfo.state}
                       </span>{" "}
                     </p>
                     <p className="text-[14px] leading-[17px] text-text-accent">
                       City:{" "}
                       <span className="text-[12px] leading-[15px] text-text-tertiary">
-                      {selectedOrder.shippingInfo.city}
+                        {selectedOrder.shippingInfo.city}
                       </span>
                     </p>
                     <p className="text-[14px] leading-[17px] text-text-accent">
@@ -344,8 +297,7 @@ const Orders = () => {
                   <p className="text-[14px] leading-[17px] text-text-accent ">
                     Pin Code:
                     <span className="text-[12px] leading-[15px] text-text-tertiary">
-                    
-                    {selectedOrder.shippingInfo.pinCode}
+                      {selectedOrder.shippingInfo.pinCode}
                     </span>
                   </p>
                 </div>
@@ -353,7 +305,7 @@ const Orders = () => {
                   <p className="text-[14px] leading-[17px] text-text-accent">
                     Items Price:
                     <span className="text-[12px] leading-[15px] text-text-tertiary">
-                    ₹{selectedOrder.itemsPrice}
+                      ₹{selectedOrder.itemsPrice}
                     </span>{" "}
                   </p>
                   <p className="text-[14px] leading-[17px] text-text-accent">
@@ -374,13 +326,13 @@ const Orders = () => {
                     <p className="text-[14px] leading-[17px] text-text-accent">
                       User Name:
                       <span className="text-[12px] leading-[15px] text-text-tertiary">
-                      {userDetails?.name || "N/A"}
+                        {userDetails?.name || "N/A"}
                       </span>
                     </p>
                     <p className="text-[14px] leading-[17px] text-text-accent">
                       Phone No:
                       <span className="text-[12px] leading-[15px] text-text-tertiary">
-                      {userDetails?.phoneNo || "N/A"}
+                        {userDetails?.phoneNo || "N/A"}
                       </span>{" "}
                     </p>
                   </div>
@@ -388,36 +340,39 @@ const Orders = () => {
                   <p className="text-[14px] leading-[17px] ">
                     User Email:
                     <span className="text-[12px] leading-[15px] text-text-tertiary">
-                    {userDetails?.email || "N/A"}
+                      {userDetails?.email || "N/A"}
                     </span>{" "}
                   </p>
                 </div>
                 <div className="pb-4 w-[435px]">
-  <p className="text-[14px] leading-[17px]">
-    Order Status: 
-    <span className="text-error">
-      {status ? status : selectedOrder.orderStatus}
-    </span>
-  </p>
-</div>
+                  <p className="text-[14px] leading-[17px]">
+                    Order Status:
+                    <span className="text-error">
+                      {status ? status : selectedOrder.orderStatus}
+                    </span>
+                  </p>
+                </div>
                 <select
-                className="w-[435px] bg-primary-30 text-text-accent p-2 rounded-lg h-10 p-2"
-                value={status}
-                onChange={handleStatusChange}
-              >
-                <option value="" disabled>
-                  Choose Status
-                </option>
-                <option value="Processing">Processing</option>
-      <option value="Shipped">Shipped</option>
-      <option value="Delivered">Delivered</option>
-      <option value="Cancelled">Cancelled</option>
-              </select>
+                  className="w-[435px] bg-primary-30 text-text-accent p-2 rounded-lg h-10 p-2"
+                  value={status}
+                  onChange={handleStatusChange}
+                >
+                  <option value="" disabled>
+                    Choose Status
+                  </option>
+                  <option value="Processing">Processing</option>
+                  <option value="Shipped">Shipped</option>
+                  <option value="Delivered">Delivered</option>
+                  <option value="Cancelled">Cancelled</option>
+                </select>
 
                 {/* Process Order Section */}
                 <div className="flex w-[435px] items-center gap-4 mt-4">
-                  <button className="bg-accent-30 text-white py-2 px-4 h-[50px] rounded-md w-full" onClick={updateOrderStatus}
-                  disabled={!status}>
+                  <button
+                    className="bg-accent-30 text-white py-2 px-4 h-[50px] rounded-md w-full"
+                    onClick={updateOrderStatus}
+                    disabled={!status}
+                  >
                     Process
                   </button>
                   <button className="bg-primary-50 text-white py-2 px-4 h-[50px] rounded-md w-full">
