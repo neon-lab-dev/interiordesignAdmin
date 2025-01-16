@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import Table from "../../components/Shared/Table/Table";
 import Modal from "../../components/Shared/popupModal";
 import axios from "axios";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 
 interface ShippingInfo {
   landmark: string;
@@ -26,7 +28,7 @@ interface Order {
   _id: string;
   shippingInfo: ShippingInfo;
   orderItems: OrderItem[];
-  userId: string;
+  user: string;
   paidAt: string;
   itemsPrice: number;
   totalPrice: number;
@@ -35,11 +37,11 @@ interface Order {
   razorpay_payment_id: string;
   createdAt: string;
   __v: number;
-  deliveredAt?: string; // Optional because it may not exist in some orders
+  deliveredAt?: string;
 }
 
 interface User {
-  name: string;
+  full_name: string;
   phoneNo: string;
   email: string;
 }
@@ -88,7 +90,7 @@ const Orders = () => {
             withCredentials: true,
           }
         );
-        console.log(response);
+        setUserDetails(response.data.user);
       } catch (error) {
         console.error("Error fetching user details:", error);
       }
@@ -99,6 +101,7 @@ const Orders = () => {
 
   const handleViewDetails = (id: string) => {
     const order = orders.find((order) => order._id === id);
+    console.log(order);
     if (order) {
       setSelectedOrder(order)
       setModalOpen(true);
@@ -106,7 +109,6 @@ const Orders = () => {
       console.error("No order found for ID:", id);
     }
   };
-  console.log(selectedOrder)
 
   const closeModal = () => {
     setModalOpen(false);
@@ -120,11 +122,12 @@ const Orders = () => {
 
   const updateOrderStatus = async () => {
     // if (!selectedOrder) return;
-    console.log(selectedOrder)
     try {
-
       const response = await axios.put(
         `https://interior-design-backend-nine.vercel.app/api/v1/admin/order/${selectedOrder?._id}`,
+        {
+          status,
+        },
         {
           withCredentials: true,
         }
@@ -183,7 +186,10 @@ const Orders = () => {
       cellRenderer: (row: any) => (
         <button
           className="px-3 py-1 text-accent-40 border-accent-40 bg-transparent rounded-[4px] font-normal text-[14px] leading-[17px]"
-          onClick={() => handleViewDetails(row._id)}
+          onClick={() => {
+            handleViewDetails(row?._id);
+            console.log(row?._id);
+          }}
         >
           View Details
         </button>
@@ -192,7 +198,7 @@ const Orders = () => {
   ];
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <LoadingSpinner/>;
   }
 
   return (
@@ -220,7 +226,7 @@ const Orders = () => {
                 <p className="text-center text-text-accent text-[18px] leading-[21px] pb-4">
                   Order Items
                 </p>
-                {selectedOrder.orderItems.map((item, index) => (
+                {selectedOrder?.orderItems?.map((item, index) => (
                   <div className=" flex flex-col gap-2" key={index}>
                     <div className="w-full  rounded-2xl  bg-primary-30">
                       <img
@@ -265,26 +271,26 @@ const Orders = () => {
                   <p className="text-[14px] leading-[17px] text-text-accent">
                     Address:
                     <span className="text-[12px] leading-[15px] text-text-tertiary">
-                      {selectedOrder.shippingInfo.address}
+                      {selectedOrder?.shippingInfo?.address}
                     </span>{" "}
                   </p>
                   <p className="text-[14px] leading-[17px] text-text-accent">
                     Landmark:
                     <span className="text-[12px] leading-[15px] text-text-tertiary">
-                      {selectedOrder.shippingInfo.landmark}
+                      {selectedOrder?.shippingInfo?.landmark}
                     </span>
                   </p>
                   <div className="flex justify-between">
                     <p className="text-[14px] leading-[17px] text-text-accent">
                       State:
                       <span className="text-[12px] leading-[15px] text-text-tertiary">
-                        {selectedOrder.shippingInfo.state}
+                        {selectedOrder?.shippingInfo?.state}
                       </span>{" "}
                     </p>
                     <p className="text-[14px] leading-[17px] text-text-accent">
                       City:{" "}
                       <span className="text-[12px] leading-[15px] text-text-tertiary">
-                        {selectedOrder.shippingInfo.city}
+                        {selectedOrder?.shippingInfo?.city}
                       </span>
                     </p>
                     <p className="text-[14px] leading-[17px] text-text-accent">
@@ -297,7 +303,7 @@ const Orders = () => {
                   <p className="text-[14px] leading-[17px] text-text-accent ">
                     Pin Code:
                     <span className="text-[12px] leading-[15px] text-text-tertiary">
-                      {selectedOrder.shippingInfo.pinCode}
+                      {selectedOrder?.shippingInfo?.pinCode}
                     </span>
                   </p>
                 </div>
@@ -305,19 +311,19 @@ const Orders = () => {
                   <p className="text-[14px] leading-[17px] text-text-accent">
                     Items Price:
                     <span className="text-[12px] leading-[15px] text-text-tertiary">
-                      ₹{selectedOrder.itemsPrice}
+                      ₹{selectedOrder?.itemsPrice}
                     </span>{" "}
                   </p>
                   <p className="text-[14px] leading-[17px] text-text-accent">
                     Discount:
                     <span className="text-[12px] leading-[15px] text-text-tertiary">
-                      ₹{selectedOrder.discount}
+                      ₹{selectedOrder?.discount}
                     </span>{" "}
                   </p>
                   <p className="text-[14px] leading-[17px] text-text-accent">
                     Total Price:
                     <span className="text-[12px] leading-[15px] text-text-tertiary">
-                      ₹ {selectedOrder.totalPrice}
+                      ₹ {selectedOrder?.totalPrice}
                     </span>{" "}
                   </p>
                 </div>
@@ -326,7 +332,7 @@ const Orders = () => {
                     <p className="text-[14px] leading-[17px] text-text-accent">
                       User Name:
                       <span className="text-[12px] leading-[15px] text-text-tertiary">
-                        {userDetails?.name || "N/A"}
+                        {userDetails?.full_name || "N/A"}
                       </span>
                     </p>
                     <p className="text-[14px] leading-[17px] text-text-accent">
@@ -348,7 +354,7 @@ const Orders = () => {
                   <p className="text-[14px] leading-[17px]">
                     Order Status:
                     <span className="text-error">
-                      {status ? status : selectedOrder.orderStatus}
+                      {status ? status : selectedOrder?.orderStatus}
                     </span>
                   </p>
                 </div>

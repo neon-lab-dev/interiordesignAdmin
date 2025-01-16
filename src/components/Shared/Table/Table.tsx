@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { ICONS } from "../../../assets";
 import DownloadButton from "./DownloadExcelBtn";

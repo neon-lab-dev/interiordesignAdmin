@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import Table from "../../components/Shared/Table/Table"; // Adjust the path as needed
 import Button from "../../components/Shared/button";
 import { ICONS } from "../../assets";
 import { useNavigate ,useLocation} from "react-router-dom";
 import axios from "axios";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 
 const Products = () => {
   const navigate = useNavigate();
@@ -20,41 +22,19 @@ const Products = () => {
 
 
   // Function to handle deleting a product
-  const handleDeleteProduct = async (productId: string) => {
-    if (!window.confirm(`Are you sure you want to delete this product ${productId}?`)) {
-      return;
-    }
-  
-    try {
-      const token = localStorage.getItem("adminToken");
-      if (!token) {
-        console.error("No token found. User is not logged in.");
-        alert("Authentication error. Please log in.");
-        return;
-      }
-  
-      const response = await fetch(
-        `https://interior-design-backend-nine.vercel.app/api/v1/product/${productId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
+  const handleDeleteProduct = async (productId: string) => {  
+    try {  
+      const response = await axios.delete(
+        `https://interior-design-backend-nine.vercel.app/api/v1/product/${productId}`, {
+          withCredentials : true
         }
       );
-  
-      if (response.ok) {
-        setReload((prev) => !prev); // Trigger re-fetch of data
-      } else {
-        const errorData = await response.json();
-        console.error("API Error Response:", errorData);
-        alert(`Failed to delete product: ${errorData.message || "Unknown error"}`);
+      console.log(response);
+      if(response?.data?.success){
+        setReload(true);
       }
     } catch (error) {
       console.error("Failed to delete product:", error);
-      alert("An error occurred while deleting the product.");
     }
   };
   
@@ -135,13 +115,12 @@ const Products = () => {
   useEffect(() => {
     const fetchProductsData = async () => {
       try {
-       
-
         const response = await axios.get(
           "https://interior-design-backend-nine.vercel.app/api/v1/admin/product",
           {
            withCredentials:true}
         );
+        console.log(response);
         setProductData(response.data.products)
       } catch (error) {
         console.error("Failed to fetch user data:", error);
@@ -175,7 +154,7 @@ const Products = () => {
       </div>
 
       {/* Loading or error state */}
-      {loading && <p>Loading products...</p>}
+      {loading && <LoadingSpinner/>}
       {error && <p className="text-red-500">{error}</p>}
 
       {/* Render table only if data is available */}

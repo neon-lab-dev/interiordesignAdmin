@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { ICONS } from "../../assets";
 import StatusCard from "../../components/Dashboard/StatusCard";
 import axios from "axios";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 
 const Dashboard = () => {
   // State to store fetched data
@@ -27,7 +29,7 @@ const Dashboard = () => {
 
   // If data is still loading, show a loading state
   if (!dashboardData) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner/>;
   }
 
   return (

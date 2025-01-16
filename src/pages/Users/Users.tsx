@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import Table from "../../components/Shared/Table/Table";
 import axios from "axios";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 
 const columns = [
   { header: "ID", accessor: "_id", width: "250px", cellClassName: "font-normal text-[14px] leading-[17px] text-text-accent" },
@@ -34,7 +36,7 @@ const Users = () => {
   }, []); // Empty dependency array ensures the effect runs only once when the component mounts
 
   if (loading) {
-    return <div>Loading...</div>; // Loading state
+    return <LoadingSpinner/>
   }
 
   return (

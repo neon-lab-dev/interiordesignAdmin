@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -6,6 +7,7 @@ import InputField2 from "../../components/Shared/InputField2";
 import InputField from "../../components/Shared/inputField";
 import UploadImage from "./UploadImage";
 import { useNavigate } from "react-router-dom";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 
 const UpdateProduct: React.FC = () => {
   const navigate = useNavigate();
@@ -102,7 +104,7 @@ const UpdateProduct: React.FC = () => {
   };
 
   if (!product) {
-    return <p>Loading product details...</p>;
+    return <LoadingSpinner/>;
   }
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

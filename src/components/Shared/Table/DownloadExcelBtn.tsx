@@ -17,10 +17,9 @@ const DownloadButton: React.FC<DownloadButtonProps> = ({ data }) => {
   };
 
   return (
-    
-      <span className="items-center bg-primary-30 h-[38px] w-[38px] flex justify-center rounded-[10px]"  onClick={downloadExcel}>
-              <img src={ICONS.download} alt="" className="w-6 h-6" />
-            </span>
+    <div className="items-center bg-primary-30 h-[38px] w-[38px] flex justify-center rounded-[10px] cursor-pointer" onClick={downloadExcel}>
+      <img src={ICONS.download} alt="" className="w-6 h-6" />
+    </div>
   );
 };
 

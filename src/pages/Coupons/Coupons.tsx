@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from "react";
 import { ICONS } from "../../assets";
 import Table from "../../components/Shared/Table/Table";
@@ -5,6 +6,7 @@ import Modal from "../../components/Shared/popupModal";
 import Button from "../../components/Shared/button";
 import InputField from "../../components/Shared/inputField";
 import axios from "axios";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 
 interface Coupon {
   _id: number;
@@ -97,7 +99,8 @@ const Coupons: React.FC = () => {
       );
 
       console.log(response.status);
-      if (response.data.success === true) {
+      if (response.data.success) {
+        closeModal();
       } else {
         setError("coupon failed: " + response.data.message);
       }
@@ -167,7 +170,7 @@ const Coupons: React.FC = () => {
       </div>
 
       {/* Loading or error state */}
-      {loading && <p>Loading products...</p>}
+      {loading && <LoadingSpinner/>}
       {error && <p className="text-red-500">{error}</p>}
 
       {/* Render table only if data is available */}
