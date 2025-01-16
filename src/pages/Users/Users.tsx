@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Table from "../../components/Shared/Table/Table";
+import axios from "axios";
 
 const columns = [
   { header: "ID", accessor: "_id", width: "250px", cellClassName: "font-normal text-[14px] leading-[17px] text-text-accent" },
@@ -15,29 +16,14 @@ const Users = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = localStorage.getItem("adminToken"); // Get token from localStorage (or cookies if needed)
-        if (!token) {
-          console.error("No token found. User is not logged in.");
-          return;
-        }
 
-        const response = await fetch("https://interior-design-backend-nine.vercel.app/api/v1/admin/users", {
-          method: "GET",
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          credentials: "include", // Ensure cookies are included if the backend uses them for session management
+        const response = await axios.get("https://interior-design-backend-nine.vercel.app/api/v1/admin/users", {
+          withCredentials:true
         });
+        console.log(response)
+        setUserData(response.data.users)
 
-        if (response.ok) {
-          const data = await response.json();
-          setUserData(data.users); // Set the fetched data
-        } else {
-          const errorData = await response.json();
-          console.error("API Error Response:", errorData);
-        }
-      } catch (error) {
+       } catch (error) {
         console.error("Failed to fetch user data:", error);
       } finally {
         setLoading(false); // Set loading to false after the fetch is complete
