@@ -122,11 +122,7 @@ const Coupons: React.FC = () => {
   useEffect(() => {
     const fetchProductsData = async () => {
       try {
-        const token = localStorage.getItem("adminToken"); // Get token from localStorage (or cookies if needed)
-        if (!token) {
-          console.error("No token found. User is not logged in.");
-          return;
-        }
+      
 
         const response = await axios.get(
           "https://interior-design-backend-nine.vercel.app/api/v1/coupon/all",
