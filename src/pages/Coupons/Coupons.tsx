@@ -128,28 +128,13 @@ const Coupons: React.FC = () => {
           return;
         }
 
-        const response = await fetch(
+        const response = await axios.get(
           "https://interior-design-backend-nine.vercel.app/api/v1/coupon/all",
           {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            credentials: "include", // Ensure cookies are included if the backend uses them for session management
-          }
+            withCredentials:true}
         );
-
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success && Array.isArray(data.coupons)) {
-            setCouponsData(data.coupons);
-          }
-        } else {
-          const errorData = await response.json();
-          console.error("API Error Response:", errorData);
-        }
-      } catch (error) {
+      // console.log(response)
+    setCouponsData(response.data.coupons)} catch (error) {
         console.error("Failed to fetch user data:", error);
       } finally {
         setLoading(false); // Set loading to false after the fetch is complete

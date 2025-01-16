@@ -20,7 +20,7 @@ const Users = () => {
         const response = await axios.get("https://interior-design-backend-nine.vercel.app/api/v1/admin/users", {
           withCredentials:true
         });
-        console.log(response)
+        // console.log(response)
         setUserData(response.data.users)
 
        } catch (error) {
