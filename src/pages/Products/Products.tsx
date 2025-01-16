@@ -3,6 +3,7 @@ import Table from "../../components/Shared/Table/Table"; // Adjust the path as n
 import Button from "../../components/Shared/button";
 import { ICONS } from "../../assets";
 import { useNavigate ,useLocation} from "react-router-dom";
+import axios from "axios";
 
 const Products = () => {
   const navigate = useNavigate();
@@ -134,33 +135,14 @@ const Products = () => {
   useEffect(() => {
     const fetchProductsData = async () => {
       try {
-        const token = localStorage.getItem("adminToken"); // Get token from localStorage (or cookies if needed)
-        if (!token) {
-          console.error("No token found. User is not logged in.");
-          return;
-        }
+       
 
-        const response = await fetch(
+        const response = await axios.get(
           "https://interior-design-backend-nine.vercel.app/api/v1/admin/product",
           {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            credentials: "include", // Ensure cookies are included if the backend uses them for session management
-          }
+           withCredentials:true}
         );
-
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success && Array.isArray(data.products)) {
-            setProductData(data.products);
-          }
-        } else {
-          const errorData = await response.json();
-          console.error("API Error Response:", errorData);
-        }
+        setProductData(response.data.products)
       } catch (error) {
         console.error("Failed to fetch user data:", error);
       } finally {

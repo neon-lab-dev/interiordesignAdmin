@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ICONS } from "../../assets";
+import axios from "axios";
 
 const Header = () => {
   const [user, setUser] = useState(""); // Initially empty
@@ -7,29 +8,11 @@ const Header = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const token = localStorage.getItem("adminToken");
-        if (!token) {
-          console.error("No token found. User is not logged in.");
-          return;
-        }
     
-        const response = await fetch("https://interior-design-backend-nine.vercel.app/api/v1/me", {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          credentials: "include",  // Use 'credentials' instead of 'withCredentials'
+        const response = await axios.get("https://interior-design-backend-nine.vercel.app/api/v1/me", {
+          withCredentials:true
         });
-    
-        console.log("API Response Status:", response.status);
-        if (response.ok) {
-          const data = await response.json();
-          console.log("API Response Data:", data);
-          setUser(data.user.full_name); // Access the full name correctly
-        } else {
-          const errorData = await response.json();
-          console.error("API Error Response:", errorData);
-        }
+        setUser(response.data.user.full_name)
       } catch (error) {
         console.error("Failed to fetch user data:", error);
       }
