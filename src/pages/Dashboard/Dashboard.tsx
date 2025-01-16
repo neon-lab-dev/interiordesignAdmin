@@ -11,19 +11,11 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        // Get the token from localStorage or cookies
-        const token = localStorage.getItem("adminToken");
-        if (!token) {
-          console.error("No token found. Please log in.");
-          return;
-        }
-
         // Make the authenticated API request
         const response = await axios.get("https://interior-design-backend-nine.vercel.app/api/v1/admin/dashboard",{
           withCredentials:true
           
         })
-        console.log(response)
         setDashboardData(response.data)
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
