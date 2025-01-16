@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ICONS } from "../../assets";
 import StatusCard from "../../components/Dashboard/StatusCard";
+import axios from "axios";
 
 const Dashboard = () => {
   // State to store fetched data
@@ -18,21 +19,12 @@ const Dashboard = () => {
         }
 
         // Make the authenticated API request
-        const response = await fetch("https://interior-design-backend-nine.vercel.app/api/v1/admin/dashboard", {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          credentials: "include", // Ensure cookies are included with the request
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setDashboardData(data); // Set the fetched data to state
-        } else {
-          const errorData = await response.json();
-          console.error("API Error Response:", errorData);
-        }
+        const response = await axios.get("https://interior-design-backend-nine.vercel.app/api/v1/admin/dashboard",{
+          withCredentials:true
+          
+        })
+        console.log(response)
+        setDashboardData(response.data)
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
       }

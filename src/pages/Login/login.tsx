@@ -29,7 +29,7 @@ import axios from "axios";
         );
   
         console.log(response.status);
-        if (response.data.success === true) {
+        if (response.data.success) {
           localStorage.setItem("isLoggedIn", "true");
           console.log("Login successful");
           navigate("/dashboard"); // Navigate to the dashboard
