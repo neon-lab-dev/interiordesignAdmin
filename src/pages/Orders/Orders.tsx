@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Table from "../../components/Shared/Table/Table";
 import Modal from "../../components/Shared/popupModal";
+import axios from "axios";
 
 interface ShippingInfo {
   landmark: string;
@@ -55,38 +56,16 @@ const Orders = () => {
     const fetchOrders = async () => {
       setLoading(true);
       try {
-        const token = localStorage.getItem("adminToken");
-        if (!token) {
-          console.error("No token found. User is not logged in.");
-          return;
-        }
 
-        const response = await fetch(
+        const response = await axios.get(
           "https://interior-design-backend-nine.vercel.app/api/v1/admin/orders/",
           {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
-          }
+           withCredentials:true}
         );
-
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success && Array.isArray(data.orders)) {
-            setOrders(data.orders);
-          } else {
-            console.error("Unexpected response format:", data);
-          }
-        } else {
-          console.error(
-            "Failed to fetch orders:",
-            response.status,
-            response.statusText
-          );
-        }
+        // console.log(response);
+        setOrders(response.data.orders)
+        
+       
       } catch (error) {
         console.error("Error fetching orders:", error);
       } finally {
