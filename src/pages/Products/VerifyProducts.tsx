@@ -68,25 +68,20 @@ const VerifyProducts:React.FC<TVerifyProductsProps> = ({ closeModal, previewData
           </div>
           <div className="text-[18px] leading-[22px] font-normal text-text-accent">
             <p className="border-b pb-3 mb-2 w-fit">Category:{" "}</p>
-            {previewData?.category?.map((category:string) => (
-              <p>{category}</p>
-            ))}
+            {previewData.category
+            }
           </div>
 
           <div className="text-[18px] leading-[22px]  font-normal text-text-accent ">
             <p className="border-b pb-3 mb-2 w-fit">Sub Category: </p>
             
-            {previewData?.sub_category?.map((subCategory:string) => (
-              <p>{subCategory}</p>
-            ))}
+            {previewData.sub_category}
           </div>
 
           <div className="text-[18px] leading-[22px]  font-normal text-text-accent ">
             <p className="border-b pb-3 mb-2 w-fit">Available Colors: </p>
             
-            {previewData?.Availablecolor?.map((color : string) => (
-              <p>{color}</p>
-            ))}
+            {previewData.Availablecolor}
           </div>
 
            {/* Showing image previews */}

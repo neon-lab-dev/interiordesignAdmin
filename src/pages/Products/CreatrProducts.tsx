@@ -55,8 +55,8 @@ const CreateProducts: React.FC = () => {
   };
 
   const [categories, setCategories] = useState<string>("");
-  const [subCategories, setSubCategories] = useState<File[]>([]);
-  const [availableColors, setAvailableColors] = useState<File[]>([]);
+  const [subCategories, setSubCategories] = useState<string>("");
+  const [availableColors, setAvailableColors] = useState<string>("");
 
   const handleAddProduct = async (data: any) => {
     const formData = new FormData();
@@ -136,6 +136,7 @@ const CreateProducts: React.FC = () => {
 
   // for data preview showing
   const [previewData, setPreviewData] = useState<any>(null);
+  console.log(previewData)
   const openModal = (data: any) => {
     const productData = {
       name: data.name,
@@ -311,11 +312,28 @@ const CreateProducts: React.FC = () => {
             }}
             isMulti={false}
           />
+
           <InputField
             type="select"
-            value={subCategories}
-            options={["Option 1", "Option 2", "Option 3"]}
+            value={subCategories || null}
+            options={[
+              "300 TC Bedsheets",
+              "400 TC Bedsheets",
+              "600 TC Bedsheets",
+            ]}
             placeholder="Sub Categories"
+            name="sub_category"
+            className="w-[513px] h-[44px] mb-7"
+            onChange={(newValues) => {
+              setSubCategories(newValues);
+            }}
+            isMulti={false}
+          />
+          {/* <InputField
+            type="select"
+            value={subCategories}
+            options={["300 TC Bedsheets", "400 TC Bedsheets", "600 TC Bedsheets"]}
+            placeholder="Categories"
             name="sub_category"
             className="w-[513px] h-[44px] mb-7"
             onChange={(newValues) => {
@@ -324,7 +342,7 @@ const CreateProducts: React.FC = () => {
               );
             }}
             isMulti={false}
-          />
+          /> */}
 
           <InputField
             type="select"
@@ -334,9 +352,7 @@ const CreateProducts: React.FC = () => {
             name="Availablecolor"
             className="w-[513px] h-[44px] mb-7"
             onChange={(newValues) => {
-              setAvailableColors(
-                Array.isArray(newValues) ? newValues : [newValues]
-              );
+              setAvailableColors(newValues);
             }}
           />
           <Button
